@@ -1,8 +1,8 @@
 #pragma once
 
-enum Direction
+enum class Direction
 {
     None,
     Up,
-    Down,
+    Down
 };
