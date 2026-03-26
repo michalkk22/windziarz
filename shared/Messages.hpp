@@ -16,10 +16,10 @@ struct Message
     long pipe;
 };
 
-class Communication
+class Messages
 {
 public:
-    Communication(int flags);
+    Messages(int flags);
     void send(const Message &message) const;
     Message receive() const;
     void unlink() const;
