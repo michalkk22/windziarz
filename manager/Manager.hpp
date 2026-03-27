@@ -1,9 +1,9 @@
 #pragma once
 
 #include "UI.hpp"
-#include "../common/msgq/Messages.hpp"
-#include "../common/shared_memory/SharedMemory.hpp"
-#include "../common/shared_memory/SharedData.hpp"
+#include "msgq/Messages.hpp"
+#include "shared_memory/SharedMemory.hpp"
+#include "shared_memory/SharedData.hpp"
 
 class Manager
 {
@@ -15,8 +15,8 @@ public:
     void stop();
 
 private:
-    Messages messages;
     UI *ui;
+    Messages messages;
     SharedMemory<SharedData> shm;
 
     struct Config

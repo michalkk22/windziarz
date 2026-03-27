@@ -4,6 +4,9 @@
 int main(int argc, char const *argv[])
 {
     // initialize
+    if (argc != 3) {
+        // handle number
+    }
     unsigned int currentFloor, destinationFloor;
     currentFloor = atoi(argv[1]);
     destinationFloor = atoi(argv[2]);

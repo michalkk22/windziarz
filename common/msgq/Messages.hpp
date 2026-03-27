@@ -7,7 +7,7 @@
 #include <cstring>
 
 #include "Position.hpp"
-#include "MessageQueue.hpp"
+#include "msgq/MessageQueue.hpp"
 
 struct Message
 {

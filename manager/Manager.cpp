@@ -2,15 +2,14 @@
 
 #include <memory>
 #include <fstream>
-#include <libs/json.hpp>
+#include "json.hpp"
 
-#include "../common/msgq/MessagesFactory.hpp"
-#include "../common/shared_memory/SharedMemoryFactory.hpp"
-#include "EmptyUI.hpp"
+#include "msgq/MessagesFactory.hpp"
+#include "shared_memory/SharedMemoryFactory.hpp"
 
 using json = nlohmann::json;
 
-Manager::Manager(UI *ui) : ui(ui), messages(MessagesFactory::manager()), shm(SharedMemoryFactory<SharedData>::create())
+Manager::Manager(UI *ui) : ui(ui), messages(MessagesFactory::manager()), shm(SharedMemoryFactory::create())
 {
 }
 

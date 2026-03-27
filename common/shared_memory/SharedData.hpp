@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../elevator/ElevatorState.hpp"
+#include "ElevatorState.hpp"
 
 struct SharedData
 {

@@ -1,5 +1,5 @@
 #include "Person.hpp"
-#include "../shared/MessagesFactory.hpp"
+#include "msgq/MessagesFactory.hpp"
 
 Person::Person(Position *position, unsigned int destinationFloor) : position(position), destinationFloor(destinationFloor), messages(MessagesFactory::person()) {
                                                                     };

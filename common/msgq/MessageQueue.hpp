@@ -12,7 +12,7 @@ public:
         mode_t mode = 0644;
     };
 
-    MessageQueue(const std::string &name, int flags, const Config &cfg = {});
+    MessageQueue(const std::string &name, int flags, const Config &cfg);
     ~MessageQueue();
 
     // non-copyable

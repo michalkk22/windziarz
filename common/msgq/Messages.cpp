@@ -11,6 +11,7 @@ Message Messages::receive() const
 {
     Message m;
     mq_.receive(reinterpret_cast<char *>(&m), sizeof(m));
+    return m;
 }
 
 void Messages::unlink() const

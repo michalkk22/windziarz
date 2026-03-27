@@ -2,14 +2,18 @@
 
 #include "SharedMemory.hpp"
 
-template <typename T>
 class SharedMemoryFactory
 {
 public:
     SharedMemoryFactory() = delete;
 
-    static SharedMemory<T> create();
-    static SharedMemory<T> join();
+    static SharedMemory<SharedData> create()
+    {
+        return SharedMemory<SharedData>("shmem", true);
+    }
 
-    static std::string name = "shm";
+    static SharedMemory<SharedData> join()
+    {
+        return SharedMemory<SharedData>("shmem");
+    }
 };

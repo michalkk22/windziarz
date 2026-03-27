@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../shared/Position.hpp"
-#include "../shared/Messages.hpp"
+#include "Position.hpp"
+#include "msgq/Messages.hpp"
 
 class Person
 {
