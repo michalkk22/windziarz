@@ -1,7 +1,7 @@
 #pragma once
 
 #include "UI.hpp"
-#include "../shared/Messages.hpp"
+#include "../common/msgq/Messages.hpp"
 
 class Manager
 {

@@ -4,7 +4,7 @@
 #include <fstream>
 #include <libs/json.hpp>
 
-#include "../shared/MessagesFactory.hpp"
+#include "../common/msgq/MessagesFactory.hpp"
 #include "EmptyUI.hpp"
 
 using json = nlohmann::json;
