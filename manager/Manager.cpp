@@ -5,13 +5,12 @@
 #include <libs/json.hpp>
 
 #include "../common/msgq/MessagesFactory.hpp"
-#include "../common/shared_memory/SharedMemory.hpp"
-#include "../common/shared_memory/SharedData.hpp"
+#include "../common/shared_memory/SharedMemoryFactory.hpp"
 #include "EmptyUI.hpp"
 
 using json = nlohmann::json;
 
-Manager::Manager(UI *ui) : ui(ui), messages(MessagesFactory::manager())
+Manager::Manager(UI *ui) : ui(ui), messages(MessagesFactory::manager()), shm(SharedMemoryFactory<SharedData>::create())
 {
 }
 
@@ -42,13 +41,11 @@ void Manager::loadConfig(const std::string &path)
 void Manager::start()
 {
     // TODO:
-    // create shared memory
-    SharedMemory<SharedData> shm("shmem", true);
-    // start ui thread
     // create elevators
-    // create mq for persons requests
-    // start persons interface
-    // start handling requests
+    // start requests handler thread
+
+    // start ui
+    ui->start(shm.get());
 }
 
 void Manager::stop()

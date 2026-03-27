@@ -6,7 +6,7 @@ template <typename T>
 class SharedMemory
 {
 public:
-    SharedMemory(const std::string &name, bool create = 0);
+    SharedMemory(const std::string &name, bool create = false);
     ~SharedMemory();
 
     T *get();

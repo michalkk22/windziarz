@@ -2,6 +2,8 @@
 
 #include "UI.hpp"
 #include "../common/msgq/Messages.hpp"
+#include "../common/shared_memory/SharedMemory.hpp"
+#include "../common/shared_memory/SharedData.hpp"
 
 class Manager
 {
@@ -15,6 +17,7 @@ public:
 private:
     Messages messages;
     UI *ui;
+    SharedMemory<SharedData> shm;
 
     struct Config
     {
