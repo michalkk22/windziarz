@@ -1,0 +1,23 @@
+{
+    "floors": 10,
+    "elevatorGroups": [
+        {
+            "count": 2,
+            "min": 0,
+            "max": 5
+        },
+        {
+            "count": 2,
+            "min": 5,
+            "max": 10
+        },
+        {
+            "count": 2,
+            "min": 0,
+            "max": 10
+        }
+    ],
+    "travelTime": 4,
+    "pauseTime": 10,
+    "maxPersons": 10
+}
