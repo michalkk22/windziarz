@@ -5,6 +5,8 @@
 #include <libs/json.hpp>
 
 #include "../common/msgq/MessagesFactory.hpp"
+#include "../common/shared_memory/SharedMemory.hpp"
+#include "../common/shared_memory/SharedData.hpp"
 #include "EmptyUI.hpp"
 
 using json = nlohmann::json;
@@ -41,8 +43,10 @@ void Manager::start()
 {
     // TODO:
     // create shared memory
+    SharedMemory<SharedData> shm("shmem", true);
+    // start ui thread
     // create elevators
-    // create ui thread
+    // create mq for persons requests
     // start persons interface
     // start handling requests
 }

@@ -7,6 +7,6 @@ class EmptyUI : public UI
 public:
     EmptyUI() = default;
 
-    void initialize() override {};
+    void start(void *) override {};
     void stop() override {};
 };

@@ -5,6 +5,6 @@ class UI
 public:
     virtual ~UI() = default;
 
-    virtual void initialize() = 0;
+    virtual void start(void *) = 0;
     virtual void stop() = 0;
 };

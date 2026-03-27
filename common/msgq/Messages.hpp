@@ -6,7 +6,7 @@
 #include <stdexcept>
 #include <cstring>
 
-#include "Direction.hpp"
+#include "Position.hpp"
 #include "MessageQueue.hpp"
 
 struct Message
