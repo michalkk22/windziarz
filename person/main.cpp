@@ -7,10 +7,11 @@
 #include <mutex>
 #include <condition_variable>
 #include "utils/readJson.hpp"
+#include "fifo/FifoFactory.hpp"
 
 std::atomic<bool> running(true);
-std::vector<std::string> globalPipes;
-std::mutex pipeMutex;
+std::vector<FifoChannel> fifos;
+
 int floors;
 int interval;
 int maxPersons;
@@ -36,9 +37,10 @@ int main(int argc, char const *argv[])
     std::vector<std::thread> persons;
     for (int i = 0; i < maxPersons && running; i++)
     {
+        fifos.push_back(FifoFactory::createReceiver("person_" + std::to_string(i)));
         persons.emplace_back(runPerson, i);
         // wait interval
-        sleep(interval);
+        std::this_thread::sleep_for(std::chrono::seconds(interval));
     }
 
     // wait for signal handler to write to pipe
@@ -56,19 +58,13 @@ int main(int argc, char const *argv[])
         t.detach();
     }
 
-    // clean up pipes
-    std::lock_guard<std::mutex> lock(pipeMutex);
-    for (const auto &p : globalPipes)
-    {
-        unlink(p.c_str());
-    }
-
     return 0;
 }
 
 void runPerson(int id)
 {
     // TODO: implement
+    fifos[id].receiveInt();
 }
 
 void loadConfig(const std::string &path)
