@@ -18,6 +18,6 @@
         }
     ],
     "travelTime": 4,
-    "pauseTime": 10,
-    "maxPersons": 10
+    "maxPersons": 10,
+    "personMinInterval": 5
 }

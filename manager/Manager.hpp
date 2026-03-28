@@ -25,10 +25,6 @@ private:
         unsigned int floors;
 
         int travelTime;
-
-        // persons
-        int pauseTime;
-        int maxPersons;
     } cfg;
 
     struct ElevatorGroup
@@ -38,4 +34,8 @@ private:
         unsigned int count; // TODO: just count for now
     };
     std::vector<ElevatorGroup> groups;
+
+    pid_t personsPid;
+
+    void runPersons();
 };

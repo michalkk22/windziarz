@@ -6,8 +6,7 @@
 
 #include "msgq/MessagesFactory.hpp"
 #include "shared_memory/SharedMemoryFactory.hpp"
-
-using json = nlohmann::json;
+#include "utils/readJson.hpp"
 
 Manager::Manager(UI *ui) : ui(ui), messages(MessagesFactory::manager()), shm(SharedMemoryFactory::create())
 {
@@ -15,15 +14,7 @@ Manager::Manager(UI *ui) : ui(ui), messages(MessagesFactory::manager()), shm(Sha
 
 void Manager::loadConfig(const std::string &path)
 {
-    std::ifstream file(path);
-
-    if (!file)
-    {
-        throw std::runtime_error("Cannot open config file");
-    }
-
-    json j;
-    file >> j;
+    nlohmann::json j = readJson(path);
 
     cfg.floors = j["floors"];
     for (auto group : j["elevatorGroups"])
@@ -33,13 +24,13 @@ void Manager::loadConfig(const std::string &path)
                           group["count"]});
     }
     cfg.travelTime = j["travelTime"];
-    cfg.maxPersons = j["maxPersons"];
-    cfg.pauseTime = j["pauseTime"];
 }
 
 void Manager::start()
 {
     // TODO:
+    // create persons
+    runPersons();
     // create elevators
     // start requests handler thread
 
@@ -51,4 +42,19 @@ void Manager::stop()
 {
     // TODO:
     // clean all
+}
+
+void Manager::runPersons()
+{
+    personsPid = fork();
+    if (personsPid == -1)
+    {
+        perror("fork failed");
+        exit(1);
+    }
+
+    if (personsPid)
+    {
+        execl("./person", "person", nullptr);
+    }
 }
