@@ -2,7 +2,7 @@
 
 Messages MessagesFactory::manager()
 {
-    return Messages(O_CREAT | O_RDONLY);
+    return Messages(O_CREAT | O_RDONLY, true);
 }
 
 Messages MessagesFactory::person()

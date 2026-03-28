@@ -8,6 +8,7 @@ MessageQueue::MessageQueue(const std::string &name, int flags, const Config &cfg
 {
     struct mq_attr attr{};
     attr.mq_msgsize = cfg.messageSize;
+    attr.mq_maxmsg = cfg.maxMessages;
 
     mq_ = mq_open(name_.c_str(), flags, cfg.mode, &attr);
     if (mq_ == (mqd_t)-1)
@@ -83,7 +84,11 @@ void MessageQueue::unlink() const
 
 std::string MessageQueue::normalizeName(const std::string &name)
 {
-    if (name.empty() || name[0] != '/')
+    if (name.empty())
+    {
+        return "/q";
+    }
+    if (name[0] != '/')
     {
         return "/" + name;
     }

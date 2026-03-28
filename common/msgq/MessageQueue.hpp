@@ -9,6 +9,7 @@ public:
     struct Config
     {
         long messageSize = 256;
+        long maxMessages = 256;
         mode_t mode = 0644;
     };
 

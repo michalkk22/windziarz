@@ -19,7 +19,8 @@ struct Message
 class Messages
 {
 public:
-    Messages(int flags);
+    Messages(int flags, bool shouldUnlink = false);
+    ~Messages();
 
     Messages(const Messages &) = delete;
     Messages &operator=(const Messages &) = delete;
@@ -29,8 +30,8 @@ public:
 
     void send(const Message &message) const;
     Message receive() const;
-    void unlink() const;
 
 private:
     MessageQueue mq_;
+    bool shouldUnlink;
 };
