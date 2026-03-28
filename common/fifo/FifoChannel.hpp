@@ -22,6 +22,7 @@ public:
 
     void sendInt(int value) const;
     int receiveInt() const;
+    std::string getPath() const;
 
 private:
     std::string path_;

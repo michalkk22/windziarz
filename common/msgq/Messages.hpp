@@ -13,7 +13,7 @@ struct Message
 {
     unsigned int floor;
     Direction direction;
-    long pipe;
+    const char pipe[16];
 };
 
 class Messages

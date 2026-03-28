@@ -77,3 +77,8 @@ int FifoChannel::receiveInt() const
     }
     return value;
 }
+
+std::string FifoChannel::getPath() const
+{
+    return path_;
+}

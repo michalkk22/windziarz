@@ -17,7 +17,7 @@ void Messages::send(const Message &message) const
 
 Message Messages::receive() const
 {
-    Message m;
+    Message m{};
     mq_.receive(reinterpret_cast<char *>(&m), sizeof(m));
     return m;
 }

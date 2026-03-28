@@ -5,12 +5,17 @@
 #include <atomic>
 #include <signal.h>
 #include <mutex>
+#include <random>
 #include <condition_variable>
 #include "utils/readJson.hpp"
 #include "fifo/FifoFactory.hpp"
+#include "shared_memory/SharedMemoryFactory.hpp"
+#include "shared_memory/SharedData.hpp"
 
 std::atomic<bool> running(true);
+
 std::vector<FifoChannel> fifos;
+SharedData *shm = SharedMemoryFactory::join().get();
 
 int floors;
 int interval;
@@ -23,10 +28,14 @@ void handleSignal(int)
     write(sigPipe[1], "a", 1);
 }
 
+std::random_device rd;
+std::mt19937 gen(rd());
+
 void runPerson(int id);
 void loadConfig(const std::string &path);
+void waitInterval();
 
-int main(int argc, char const *argv[])
+int main()
 {
     pipe(sigPipe);
     fcntl(sigPipe[0], F_SETFL, O_NONBLOCK);
@@ -39,8 +48,7 @@ int main(int argc, char const *argv[])
     {
         fifos.push_back(FifoFactory::createReceiver("person_" + std::to_string(i)));
         persons.emplace_back(runPerson, i);
-        // wait interval
-        std::this_thread::sleep_for(std::chrono::seconds(interval));
+        waitInterval();
     }
 
     // wait for signal handler to write to pipe
@@ -63,8 +71,28 @@ int main(int argc, char const *argv[])
 
 void runPerson(int id)
 {
-    // TODO: implement
-    fifos[id].receiveInt();
+    std::uniform_int_distribution<> dist(0, floors);
+    unsigned int curr = 0, dest = 0;
+    // TODO: shared memory data: use correct pointer
+    Position *position = &shm->personPositions;
+
+    while (running)
+    {
+        curr = dist(gen);
+        do
+            dest = dist(gen);
+        while (curr == dest);
+
+        Person{
+            position,
+            curr,
+            dest,
+            &fifos[id],
+        }
+            .run();
+
+        waitInterval();
+    }
 }
 
 void loadConfig(const std::string &path)
@@ -74,4 +102,9 @@ void loadConfig(const std::string &path)
     floors = j["floors"];
     maxPersons = j["maxPersons"];
     interval = j["personMinInterval"];
+}
+
+void waitInterval()
+{
+    std::this_thread::sleep_for(std::chrono::seconds(interval));
 }

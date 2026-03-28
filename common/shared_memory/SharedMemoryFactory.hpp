@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SharedMemory.hpp"
+#include "SharedData.hpp"
 
 class SharedMemoryFactory
 {
