@@ -7,6 +7,9 @@
 #include <mutex>
 #include <random>
 #include <condition_variable>
+// TODO: delete logs
+#include <iostream>
+
 #include "utils/readJson.hpp"
 #include "fifo/FifoFactory.hpp"
 #include "shared_memory/SharedMemoryFactory.hpp"
@@ -24,6 +27,7 @@ int maxPersons;
 int sigPipe[2];
 void handleSignal(int)
 {
+    std::cerr << "Person got signal" << std::endl;
     running = false;
     write(sigPipe[1], "a", 1);
 }

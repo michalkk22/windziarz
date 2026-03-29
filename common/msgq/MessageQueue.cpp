@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <cstring>
 #include <cerrno>
+#include <ctime>
 
 MessageQueue::MessageQueue(const std::string &name, int flags, const Config &cfg)
     : name_(normalizeName(name))
@@ -60,18 +61,25 @@ void MessageQueue::send(const char *msg_ptr, size_t msg_len, unsigned int prio) 
     }
 }
 
-void MessageQueue::receive(char *buffer, size_t buffer_len, unsigned int *prio) const
+ssize_t MessageQueue::receive(char *buffer, size_t buffer_len, unsigned int *prio) const
 {
     if (buffer_len < static_cast<size_t>(attr_.mq_msgsize))
     {
         throw std::runtime_error("Buffer too small");
     }
 
-    ssize_t bytes = mq_receive(mq_, buffer, buffer_len, prio);
-    if (bytes == -1)
+    struct timespec ts;
+    clock_gettime(CLOCK_REALTIME, &ts);
+    ts.tv_sec += 1;
+
+    ssize_t bytes = mq_timedreceive(mq_, buffer, buffer_len, prio, &ts);
+
+    if (bytes == -1 && errno != ETIMEDOUT)
     {
         throw std::runtime_error("mq_receive failed: " + std::string(strerror(errno)));
     }
+
+    return bytes;
 }
 
 void MessageQueue::unlink() const

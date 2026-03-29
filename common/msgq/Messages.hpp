@@ -1,19 +1,17 @@
 #pragma once
 
 #include <mqueue.h>
-#include <string>
-#include <vector>
 #include <stdexcept>
-#include <cstring>
+#include <array>
 
 #include "Position.hpp"
 #include "msgq/MessageQueue.hpp"
 
 struct Message
 {
-    unsigned int floor;
+    int floor;
     Direction direction;
-    const char pipe[16];
+    std::array<char, 16> pipe;
 };
 
 class Messages

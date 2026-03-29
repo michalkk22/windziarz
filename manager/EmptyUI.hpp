@@ -8,8 +8,12 @@ class EmptyUI : public UI
 public:
     EmptyUI() = default;
 
-    void start(void *) override {
-        sleep(10);
+    void start(std::atomic<bool> &running, void *) override
+    {
+        while (running)
+        {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+        }
     };
     void stop() override {};
 };

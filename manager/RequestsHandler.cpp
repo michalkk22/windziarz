@@ -1,0 +1,38 @@
+#include "RequestsHandler.hpp"
+
+#include <memory>
+#include <string>
+// TODO: delete logs
+#include <iostream>
+
+#include "fifo/FifoFactory.hpp"
+
+RequestsHandler::RequestsHandler(Messages *messages, SharedData *shm, std::atomic<bool> &running)
+    : messages(messages), shm(shm), running(running) {}
+
+void RequestsHandler::run()
+{
+    Message msg;
+    while (running)
+    {
+        msg = messages->receive();
+        if (msg.floor != -1)
+        {
+            handle(msg);
+        }
+    }
+}
+
+void RequestsHandler::handle(Message &msg)
+{
+    // TODO:
+    // choose and send Elevator
+
+    int elevator = 2;
+    // answer Person
+    std::string pipe(msg.pipe.data());
+    std::cout << msg.floor << " " << pipe << std::endl;
+    std::unique_ptr<FifoChannel> fifo =
+        FifoFactory::createSender(pipe);
+    fifo->sendInt(elevator);
+};

@@ -1,5 +1,9 @@
 #pragma once
 
+#include <atomic>
+#include <thread>
+#include <vector>
+
 #include "UI.hpp"
 #include "msgq/Messages.hpp"
 #include "shared_memory/SharedMemory.hpp"
@@ -8,7 +12,7 @@
 class Manager
 {
 public:
-    Manager(UI *ui);
+    Manager(UI *ui, std::atomic<bool> &running);
 
     void loadConfig(const std::string &path);
     void start();
@@ -36,6 +40,9 @@ private:
     std::vector<ElevatorGroup> groups;
 
     pid_t personsPid;
-
     void runPersons();
+
+    std::atomic<bool> &running;
+    std::unique_ptr<std::thread> requests;
+    void runRequestsHandler();
 };

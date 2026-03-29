@@ -25,7 +25,7 @@ public:
     MessageQueue &operator=(MessageQueue &&other) noexcept;
 
     void send(const char *msg_ptr, size_t msg_len, unsigned int prio = 0) const;
-    void receive(char *buffer, size_t buffer_len, unsigned int *prio = nullptr) const;
+    ssize_t receive(char *buffer, size_t buffer_len, unsigned int *prio = nullptr) const;
 
     void unlink() const;
 

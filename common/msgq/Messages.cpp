@@ -17,7 +17,11 @@ void Messages::send(const Message &message) const
 
 Message Messages::receive() const
 {
-    Message m{};
-    mq_.receive(reinterpret_cast<char *>(&m), sizeof(m));
+    Message m;
+    ssize_t result = mq_.receive(reinterpret_cast<char *>(&m), sizeof(m));
+    if (result == -1)
+    {
+        m.floor = -1;
+    }
     return m;
 }

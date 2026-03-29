@@ -10,7 +10,7 @@ FifoChannel FifoFactory::createReceiver(const std::string &name)
     return FifoChannel(makePath(name), FifoChannel::Mode::Read, true);
 }
 
-FifoChannel FifoFactory::createSender(const std::string &name)
+std::unique_ptr<FifoChannel> FifoFactory::createSender(const std::string &name)
 {
-    return FifoChannel(makePath(name), FifoChannel::Mode::Write);
+    return std::make_unique<FifoChannel>(makePath(name), FifoChannel::Mode::Write);
 }

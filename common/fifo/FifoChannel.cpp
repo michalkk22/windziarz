@@ -6,6 +6,8 @@
 #include <unistd.h>
 #include <stdexcept>
 #include <cstring>
+// TODO: delete logs
+#include <iostream>
 
 FifoChannel::FifoChannel(const std::string &path, Mode mode, bool create)
     : path_(path), owner_(create)
@@ -23,6 +25,7 @@ FifoChannel::FifoChannel(const std::string &path, Mode mode, bool create)
     fd_ = open(path.c_str(), flags);
     if (fd_ == -1)
     {
+        std::cout << path << std::endl;
         throw std::runtime_error("open failed: " + std::string(strerror(errno)));
     }
 }
@@ -78,7 +81,9 @@ int FifoChannel::receiveInt() const
     return value;
 }
 
-std::string FifoChannel::getPath() const
+std::string FifoChannel::getName() const
 {
-    return path_;
+    size_t pos = path_.find_last_of("/");
+    std::string name = path_.substr(pos + 1);
+    return name;
 }

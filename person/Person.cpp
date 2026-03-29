@@ -20,11 +20,11 @@ void Person::run()
     {
         // call elevator by sending request to manager
         Message msg = {
-            destinationFloor,
+            (int)destinationFloor,
             destinationFloor > position->floor
                 ? Direction::Up
                 : Direction::Down,
-            *fifo->getPath().c_str(),
+            *fifo->getName().c_str(),
         };
         messages.send(msg);
 
