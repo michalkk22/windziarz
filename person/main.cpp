@@ -51,6 +51,7 @@ int main()
 
     // run Persons on threads
     std::vector<std::thread> persons;
+    fifos.reserve(maxPersons);
     for (int i = 0; i < maxPersons && running; i++)
     {
         std::cout << "Creating threads: fifo " << i << std::endl;
