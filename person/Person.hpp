@@ -1,5 +1,7 @@
 #pragma once
 
+#include <atomic>
+
 #include "Position.hpp"
 #include "msgq/Messages.hpp"
 #include "fifo/FifoChannel.hpp"
@@ -10,7 +12,8 @@ public:
     Person(Position *position,
            unsigned int currentFloor,
            unsigned int destinationFloor,
-           FifoChannel *fifo);
+           FifoChannel *fifo,
+           std::atomic<bool> &running);
 
     void run();
 
@@ -19,4 +22,9 @@ private:
     unsigned int destinationFloor;
     Messages messages;
     FifoChannel *fifo;
+    std::atomic<bool> &running;
+
+    void callElevator();
+    int getElevatorData();
+    void waitForElevatorAndEnter();
 };

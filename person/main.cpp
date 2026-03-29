@@ -18,7 +18,7 @@
 std::atomic<bool> running(true);
 
 std::vector<FifoChannel> fifos;
-SharedData *shm = SharedMemoryFactory::join().get();
+SharedData *shm;
 
 int floors;
 int interval;
@@ -46,11 +46,16 @@ int main()
     signal(SIGINT, handleSignal);
     loadConfig("config.json");
 
+    auto shmObj = SharedMemoryFactory::join();
+    shm = shmObj.get();
+
     // run Persons on threads
     std::vector<std::thread> persons;
     for (int i = 0; i < maxPersons && running; i++)
     {
+        std::cout << "Creating threads: fifo " << i << std::endl;
         fifos.push_back(FifoFactory::createReceiver("person_" + std::to_string(i)));
+        std::cout << "Creating threads: Person_" << i << std::endl;
         persons.emplace_back(runPerson, i);
         waitInterval();
     }
@@ -59,6 +64,7 @@ int main()
     char buf;
     while (running)
     {
+        std::cout << "Persons ready, waiting for signal..." << std::endl;
         int n = read(sigPipe[0], &buf, 1);
         if (n > 0)
             break;
@@ -75,6 +81,7 @@ int main()
 
 void runPerson(int id)
 {
+    std::cout << "Starting Person_" << id << std::endl;
     std::uniform_int_distribution<> dist(0, floors);
     unsigned int curr = 0, dest = 0;
     // TODO: shared memory data: use correct pointer
@@ -87,12 +94,14 @@ void runPerson(int id)
             dest = dist(gen);
         while (curr == dest);
 
-        Person{
+        std::cout << "Running Person_" << id << " with " << curr << " " << dest << std::endl;
+
+        Person(
             position,
             curr,
             dest,
             &fifos[id],
-        }
+            running)
             .run();
 
         waitInterval();
@@ -106,6 +115,8 @@ void loadConfig(const std::string &path)
     floors = j["floors"];
     maxPersons = j["maxPersons"];
     interval = j["personMinInterval"];
+
+    std::cout << "Config for persons: floors " << floors << " maxPersons " << maxPersons << " interval " << interval << std::endl;
 }
 
 void waitInterval()

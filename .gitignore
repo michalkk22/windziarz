@@ -2,5 +2,7 @@
 .vscode
 
 # executables etc.
-bin
+bin/manager
+bin/person
+bin/elevator
 *.o

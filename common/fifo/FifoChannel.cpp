@@ -4,6 +4,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <poll.h>
 #include <stdexcept>
 #include <cstring>
 // TODO: delete logs
@@ -20,7 +21,7 @@ FifoChannel::FifoChannel(const std::string &path, Mode mode, bool create)
         }
     }
 
-    int flags = (mode == Mode::Read) ? O_RDONLY : O_WRONLY;
+    int flags = (mode == Mode::Read) ? O_RDWR : O_WRONLY;
 
     fd_ = open(path.c_str(), flags);
     if (fd_ == -1)
@@ -74,10 +75,32 @@ void FifoChannel::sendInt(int value) const
 int FifoChannel::receiveInt() const
 {
     int value;
-    if (read(fd_, &value, sizeof(value)) != sizeof(value))
+
+    struct pollfd pfd;
+    pfd.fd = fd_;
+    pfd.events = POLLIN;
+
+    int result = poll(&pfd, 1, 1000);
+    if (result > 0)
     {
-        throw std::runtime_error("read failed");
+        if (pfd.revents & POLLIN)
+        {
+            if (read(fd_, &value, sizeof(value)) != sizeof(value))
+            {
+                throw std::runtime_error("read failed");
+            }
+        }
     }
+    else if (result == 0)
+    {
+        // timeout
+        return -1;
+    }
+    else
+    {
+        throw std::runtime_error("poll failed");
+    }
+
     return value;
 }
 

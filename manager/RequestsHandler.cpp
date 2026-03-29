@@ -12,6 +12,8 @@ RequestsHandler::RequestsHandler(Messages *messages, SharedData *shm, std::atomi
 
 void RequestsHandler::run()
 {
+    std::cout << "Handler started run." << std::endl;
+
     Message msg;
     while (running)
     {
@@ -29,10 +31,12 @@ void RequestsHandler::handle(Message &msg)
     // choose and send Elevator
 
     int elevator = 2;
+
     // answer Person
     std::string pipe(msg.pipe.data());
-    std::cout << msg.floor << " " << pipe << std::endl;
+    std::cout << "Sending elevator: " << msg.floor << " to pipe " << pipe << std::endl;
     std::unique_ptr<FifoChannel> fifo =
         FifoFactory::createSender(pipe);
     fifo->sendInt(elevator);
+    std::cout << "Handler sent elevator " << msg.floor << " to pipe " << pipe << std::endl;
 };
