@@ -62,7 +62,9 @@ void Manager::stop()
     // TODO:
     // clean all
 
-    kill(personsPid, SIGINT);
+    requests->join();
+
+    // kill(personsPid, SIGINT); // not needed?
     waitpid(personsPid, nullptr, 0);
 }
 
