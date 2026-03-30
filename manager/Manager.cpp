@@ -14,7 +14,7 @@
 
 Manager::Manager(UI *ui, std::atomic<bool> &running) : ui(ui),
                                                        messages(MessagesFactory::manager()),
-                                                       states(SharedMemoryFactory::create()),
+                                                       states(SharedMemoryFactory::createStates()),
                                                        running(running)
 {
     loadConfig();

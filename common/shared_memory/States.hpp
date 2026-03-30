@@ -1,11 +1,13 @@
 #pragma once
 
+#include <array>
+
+#include "config.hpp"
 #include "ElevatorState.hpp"
 #include "PersonState.hpp"
-#include "config.hpp"
 
 struct States
 {
-    ElevatorState elevatorStates[ELEVATOR_COUNT];
-    PersonState personStates[PERSON_COUNT];
+    std::array<ElevatorState, ELEVATOR_COUNT> elevatorStates;
+    std::array<PersonState, PERSON_COUNT> personStates;
 };

@@ -40,7 +40,7 @@ int main()
     fcntl(sigPipe[0], F_SETFL, O_NONBLOCK);
     signal(SIGINT, handleSignal);
 
-    auto shmObj = SharedMemoryFactory::join();
+    auto shmObj = SharedMemoryFactory::joinStates();
     states = shmObj.get();
 
     // run Persons on threads
@@ -79,12 +79,11 @@ void runPerson(int id)
     std::cout << "Starting Person_" << id << std::endl;
     std::uniform_int_distribution<> dist(0, MAX_FLOOR);
     unsigned int curr = 0, dest = 0;
-    // TODO: shared memory data: use correct pointer
+    curr = dist(gen);
     PersonState *state = &states->personStates[id];
 
     while (running)
     {
-        curr = dist(gen);
         do
             dest = dist(gen);
         while (curr == dest);

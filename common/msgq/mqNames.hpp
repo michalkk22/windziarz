@@ -1,4 +1,4 @@
 #pragma once
 
-#define MQ_MANAGER_REQUESTS "/manager_requests"
-#define MQ_ELEVATOR_PREFIX "/elevator"
+inline const std::string MQ_MANAGER_REQUESTS = "/manager_requests";
+inline const std::string MQ_ELEVATOR_PREFIX = "/elevator";
