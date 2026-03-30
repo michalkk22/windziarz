@@ -1,5 +1,6 @@
 #pragma once
 
+#include <atomic>
 #include <optional>
 
 #include "ElevatorQueueData.hpp"
@@ -11,6 +12,13 @@ struct ElevatorQueueSnapshot
     size_t size;
 };
 
+struct UpdateResult
+{
+    bool shouldGoIdle = false;
+    bool shouldOpenDoor = false;
+    unsigned int nextFloor = 0;
+};
+
 class ElevatorQueue
 {
 public:
@@ -18,8 +26,9 @@ public:
 
     ElevatorQueueSnapshot getData();
     void addFloor(unsigned int floor);
-    std::optional<unsigned int> updateAndGetNext(unsigned int floor);
+    UpdateResult updateAndGetNext(unsigned int floor);
     void goIdle();
+    void wakeUp();
 
 private:
     ElevatorQueueData *data;

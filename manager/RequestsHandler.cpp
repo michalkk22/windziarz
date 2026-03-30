@@ -14,13 +14,12 @@ void RequestsHandler::run()
 {
     std::cout << "Handler started run." << std::endl;
 
-    CallElevatorMessage msg;
     while (running)
     {
-        msg = messages->receive();
-        if (msg.floor != -1)
+        auto msg = messages->receive();
+        if (msg.has_value())
         {
-            handle(msg);
+            handle(msg.value());
         }
     }
 }

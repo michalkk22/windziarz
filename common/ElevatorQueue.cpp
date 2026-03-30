@@ -33,6 +33,12 @@ void ElevatorQueue::addFloor(unsigned int floor)
 
     bool isIdle = d.size == 0;
 
+    // I can only go so far...
+    if (floor > d.maxFloor)
+        floor = d.maxFloor;
+    if (floor < d.minFloor)
+        floor = d.minFloor;
+
     for (size_t i = d.size; i > 0; --i)
     {
         d.queue[i] = d.queue[i - 1];
@@ -41,29 +47,38 @@ void ElevatorQueue::addFloor(unsigned int floor)
     ++d.size;
 
     if (isIdle)
-    {
-        pthread_cond_signal(&d.idleCond);
-    }
+        wakeUp();
+
     pthread_mutex_unlock(&d.mutex);
 }
 
-std::optional<unsigned int> ElevatorQueue::updateAndGetNext(unsigned int floor)
+UpdateResult ElevatorQueue::updateAndGetNext(unsigned int currentFloor)
 {
     auto &d = *data;
     pthread_mutex_lock(&d.mutex);
 
-    d.currentFloor = floor;
-    if (d.size > 0 && floor == d.queue[0])
-        removeFloor();
+    UpdateResult result;
 
-    std::optional<unsigned int> next;
-    next = -1;
+    d.currentFloor = currentFloor;
     if (d.size > 0)
     {
-        next = d.queue[0];
+        if (currentFloor == d.queue[0])
+        {
+            result.shouldOpenDoor = true;
+            removeFloor();
+            pthread_mutex_unlock(&d.mutex);
+            return result;
+        }
+
+        result.nextFloor = d.queue[0];
     }
+    else
+    {
+        result.shouldGoIdle = true;
+    }
+
     pthread_mutex_unlock(&d.mutex);
-    return next;
+    return result;
 }
 
 void ElevatorQueue::goIdle()
@@ -77,6 +92,11 @@ void ElevatorQueue::goIdle()
     }
 
     pthread_mutex_unlock(&d.mutex);
+}
+
+void ElevatorQueue::wakeUp()
+{
+    pthread_cond_signal(&data->idleCond);
 }
 
 void ElevatorQueue::removeFloor()

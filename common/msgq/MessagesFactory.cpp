@@ -4,8 +4,7 @@
 
 Messages<CallElevatorMessage> MessagesFactory::manager()
 {
-    std::string name{MQ_MANAGER_REQUESTS};
-    return Messages<CallElevatorMessage>(name,
+    return Messages<CallElevatorMessage>(MQ_MANAGER_REQUESTS,
                                          sizeof(CallElevatorMessage),
                                          O_CREAT | O_RDONLY,
                                          true);
@@ -13,6 +12,22 @@ Messages<CallElevatorMessage> MessagesFactory::manager()
 
 Messages<CallElevatorMessage> MessagesFactory::person()
 {
-    std::string name{MQ_MANAGER_REQUESTS};
-    return Messages<CallElevatorMessage>(name, sizeof(CallElevatorMessage), O_WRONLY);
+    return Messages<CallElevatorMessage>(MQ_MANAGER_REQUESTS,
+                                         sizeof(CallElevatorMessage),
+                                         O_WRONLY);
+}
+
+Messages<FloorRequestMessage> MessagesFactory::createElevatorRequests(std::string id)
+{
+    return Messages<FloorRequestMessage>(MQ_ELEVATOR_PREFIX + id,
+                                         sizeof(FloorRequestMessage),
+                                         O_CREAT | O_RDONLY,
+                                         true);
+}
+
+Messages<FloorRequestMessage> MessagesFactory::joinElevatorRequests(std::string id)
+{
+    return Messages<FloorRequestMessage>(MQ_ELEVATOR_PREFIX + id,
+                                         sizeof(FloorRequestMessage),
+                                         O_WRONLY);
 }

@@ -12,4 +12,6 @@ struct ElevatorQueueData
     unsigned int currentFloor;
     unsigned int queue[MAX_FLOOR];
     size_t size;
+    unsigned int minFloor;
+    unsigned int maxFloor;
 };

@@ -80,7 +80,7 @@ void runPerson(int id)
     std::uniform_int_distribution<> dist(0, MAX_FLOOR);
     unsigned int curr = 0, dest = 0;
     curr = dist(gen);
-    PersonState *state = &states->personStates[id];
+    PersonState *state = &states->personStates.at(id);
 
     while (running)
     {

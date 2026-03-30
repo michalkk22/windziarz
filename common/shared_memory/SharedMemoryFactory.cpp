@@ -14,7 +14,7 @@ SharedMemory<States> SharedMemoryFactory::joinStates()
 
 SharedMemory<ElevatorQueueData> SharedMemoryFactory::createElevatorQueue(std::string id)
 {
-    SharedMemory<ElevatorQueueData> shm(SHM_ELEVATOR_QUEUE_PREFIX, true);
+    SharedMemory<ElevatorQueueData> shm(SHM_ELEVATOR_QUEUE_PREFIX + id, true);
 
     pthread_mutexattr_t attr;
     pthread_mutexattr_init(&attr);

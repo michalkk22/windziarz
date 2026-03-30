@@ -20,3 +20,4 @@ constexpr ElevatorGroupConfig ELEVATOR_GROUPS[3]{
 };
 
 constexpr int TRAVEL_TIME = 4;
+constexpr int DOOR_INTERVAL = 2;

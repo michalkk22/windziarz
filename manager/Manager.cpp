@@ -83,6 +83,6 @@ void Manager::runPersons()
 void Manager::runRequestsHandler()
 {
     requests = std::make_unique<std::thread>([this]()
-                                             { RequestsHandler{&messages, states.get(), running}
+                                             { RequestsHandler(&messages, states.get(), running)
                                                    .run(); });
 }

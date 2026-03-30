@@ -3,6 +3,7 @@
 #include <mqueue.h>
 #include <stdexcept>
 #include <array>
+#include <optional>
 
 #include "Direction.hpp"
 #include "msgq/MessageQueue.hpp"
@@ -11,7 +12,7 @@ template <typename T>
 class Messages
 {
 public:
-    Messages(std::string &name,
+    Messages(const std::string &name,
              long msgSize,
              int flags,
              bool shouldUnlink = false)
@@ -37,13 +38,13 @@ public:
         mq_.send(reinterpret_cast<const char *>(&message), sizeof(message));
     }
 
-    T receive() const
+    std::optional<T> receive() const
     {
         T msg;
         ssize_t result = mq_.receive(reinterpret_cast<char *>(&msg), sizeof(msg));
         if (result == -1)
         {
-            msg.floor = -1;
+            return std::nullopt;
         }
         return msg;
     }

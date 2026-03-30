@@ -22,6 +22,7 @@ private:
     UI *ui;
     Messages<CallElevatorMessage> messages;
     SharedMemory<States> states;
+    std::atomic<bool> &running;
 
     struct ElevatorGroup
     {
@@ -38,7 +39,6 @@ private:
     void runPersons();
 
     // RequestsHandler
-    std::atomic<bool> &running;
     std::unique_ptr<std::thread> requests;
     void runRequestsHandler();
 };
