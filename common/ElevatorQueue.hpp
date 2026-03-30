@@ -4,6 +4,13 @@
 
 #include "ElevatorQueueData.hpp"
 
+struct ElevatorQueueSnapshot
+{
+    unsigned int currentFloor;
+    unsigned int queue[MAX_FLOOR];
+    size_t size;
+};
+
 class ElevatorQueue
 {
 public:
@@ -19,11 +26,4 @@ private:
 
     void removeFloor();
     bool isAlreadyInQueue(unsigned int floor);
-};
-
-struct ElevatorQueueSnapshot
-{
-    unsigned int currentFloor;
-    unsigned int queue[MAX_FLOOR];
-    size_t size;
 };

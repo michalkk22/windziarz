@@ -11,4 +11,5 @@ struct ElevatorQueueData
 
     unsigned int currentFloor;
     unsigned int queue[MAX_FLOOR];
+    size_t size;
 };
