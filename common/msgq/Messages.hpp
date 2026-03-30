@@ -4,21 +4,27 @@
 #include <stdexcept>
 #include <array>
 
-#include "Position.hpp"
+#include "Direction.hpp"
 #include "msgq/MessageQueue.hpp"
 
-struct Message
-{
-    int floor;
-    Direction direction;
-    std::array<char, 16> pipe;
-};
-
+template <typename T>
 class Messages
 {
 public:
-    Messages(int flags, bool shouldUnlink = false);
-    ~Messages();
+    Messages(std::string &name,
+             long msgSize,
+             int flags,
+             bool shouldUnlink = false)
+        : mq_(name,
+              flags,
+              MessageQueue::Config{msgSize, 10, (mode_t)0644}),
+          shouldUnlink(shouldUnlink) {}
+
+    ~Messages()
+    {
+        if (shouldUnlink)
+            mq_.unlink();
+    }
 
     Messages(const Messages &) = delete;
     Messages &operator=(const Messages &) = delete;
@@ -26,8 +32,21 @@ public:
     Messages(Messages &&) = default;
     Messages &operator=(Messages &&) = default;
 
-    void send(const Message &message) const;
-    Message receive() const;
+    void send(const T &message) const
+    {
+        mq_.send(reinterpret_cast<const char *>(&message), sizeof(message));
+    }
+
+    T receive() const
+    {
+        T msg;
+        ssize_t result = mq_.receive(reinterpret_cast<char *>(&msg), sizeof(msg));
+        if (result == -1)
+        {
+            msg.floor = -1;
+        }
+        return msg;
+    }
 
 private:
     MessageQueue mq_;

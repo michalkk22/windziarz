@@ -1,20 +1,20 @@
 #pragma once
 
 #include "SharedMemory.hpp"
-#include "SharedData.hpp"
+#include "States.hpp"
 
 class SharedMemoryFactory
 {
 public:
     SharedMemoryFactory() = delete;
 
-    static SharedMemory<SharedData> create()
+    static SharedMemory<States> create()
     {
-        return SharedMemory<SharedData>("shmem", true);
+        return SharedMemory<States>("shmem", true);
     }
 
-    static SharedMemory<SharedData> join()
+    static SharedMemory<States> join()
     {
-        return SharedMemory<SharedData>("shmem");
+        return SharedMemory<States>("shmem");
     }
 };

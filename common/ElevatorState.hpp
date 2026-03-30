@@ -1,9 +1,10 @@
 #pragma once
 
-#include "../common/Position.hpp"
+#include "Direction.hpp"
 
 struct ElevatorState
 {
+    unsigned int floor;
     bool isDoorOpen;
-    Position *position;
+    Direction direction;
 };

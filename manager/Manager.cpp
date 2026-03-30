@@ -5,8 +5,8 @@
 #include <signal.h>
 #include <unistd.h>
 #include <sys/wait.h>
-#include "json.hpp"
 
+#include "config.hpp"
 #include "msgq/MessagesFactory.hpp"
 #include "shared_memory/SharedMemoryFactory.hpp"
 #include "utils/readJson.hpp"
@@ -17,20 +17,17 @@ Manager::Manager(UI *ui, std::atomic<bool> &running) : ui(ui),
                                                        shm(SharedMemoryFactory::create()),
                                                        running(running)
 {
+    loadConfig();
 }
 
-void Manager::loadConfig(const std::string &path)
+void Manager::loadConfig()
 {
-    nlohmann::json j = readJson(path);
-
-    cfg.floors = j["floors"];
-    for (auto group : j["elevatorGroups"])
+    for (auto group : ELEVATOR_GROUPS)
     {
-        groups.push_back({group["min"],
-                          group["max"],
-                          group["count"]});
+        groups.push_back({group.count,
+                          group.minFloor,
+                          group.maxFloor});
     }
-    cfg.travelTime = j["travelTime"];
 }
 
 void Manager::start()

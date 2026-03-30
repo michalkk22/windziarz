@@ -4,41 +4,50 @@
 #include <array>
 #include <cstring>
 
-Person::Person(Position *position,
+Person::Person(PersonState *state,
                unsigned int currentFloor,
                unsigned int destinationFloor,
                FifoChannel *fifo,
                std::atomic<bool> &running)
-    : position(position),
+    : state(state),
       destinationFloor(destinationFloor),
       messages(MessagesFactory::person()),
       fifo(fifo),
       running(running)
 {
-    // set your position
-    *position = Position{currentFloor, Direction::None};
-    std::cout << "My position is: floor " << position->floor << std::endl;
+    // set your state
+    updateState(-1, currentFloor);
+    std::cout << "My state is: floor " << state->floor << std::endl;
 }
 
 void Person::run()
 {
-    while (running && position->floor != destinationFloor)
+    while (running && state->floor != destinationFloor)
     {
-        std::cout << "Calling elevator to floor " << position->floor << std::endl;
+        std::cout << "Calling elevator to floor " << state->floor << std::endl;
         callElevator();
-        std::cout << "Called elevator to floor " << position->floor << std::endl;
+        std::cout << "Called elevator to floor " << state->floor << std::endl;
 
         // TODO:
         // receive elevator data
         int elevator = getElevatorData();
         std::cout << "Received elevator number " << elevator << std::endl;
+        break;
 
         // wait for elevator
 
+        updateState(elevator);
         // request floor
 
         // exit
     }
+}
+
+void Person::updateState(const int elevator, const unsigned int floor)
+{
+    // TODO: synchro mutex
+    state->inElevator = elevator;
+    state->floor = floor;
 }
 
 void Person::callElevator()
@@ -51,9 +60,9 @@ void Person::callElevator()
     strncpy(pipe.data(), name.c_str(), name.size());
     pipe[pipe.size() - 1] = '\0'; // not sure if necessary or even correct
 
-    Message msg = {
+    CallElevatorMessage msg = {
         (int)destinationFloor,
-        destinationFloor > position->floor
+        destinationFloor > state->floor
             ? Direction::Up
             : Direction::Down,
         pipe,

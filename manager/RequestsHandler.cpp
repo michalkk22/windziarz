@@ -7,14 +7,14 @@
 
 #include "fifo/FifoFactory.hpp"
 
-RequestsHandler::RequestsHandler(Messages *messages, SharedData *shm, std::atomic<bool> &running)
+RequestsHandler::RequestsHandler(Messages<CallElevatorMessage> *messages, States *shm, std::atomic<bool> &running)
     : messages(messages), shm(shm), running(running) {}
 
 void RequestsHandler::run()
 {
     std::cout << "Handler started run." << std::endl;
 
-    Message msg;
+    CallElevatorMessage msg;
     while (running)
     {
         msg = messages->receive();
@@ -25,7 +25,7 @@ void RequestsHandler::run()
     }
 }
 
-void RequestsHandler::handle(Message &msg)
+void RequestsHandler::handle(CallElevatorMessage &msg)
 {
     // TODO:
     // choose and send Elevator

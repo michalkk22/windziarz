@@ -10,19 +10,15 @@
 // TODO: delete logs
 #include <iostream>
 
-#include "utils/readJson.hpp"
+#include "config.hpp"
 #include "fifo/FifoFactory.hpp"
 #include "shared_memory/SharedMemoryFactory.hpp"
-#include "shared_memory/SharedData.hpp"
+#include "shared_memory/States.hpp"
 
 std::atomic<bool> running(true);
 
 std::vector<FifoChannel> fifos;
-SharedData *shm;
-
-int floors;
-int interval;
-int maxPersons;
+States *shm;
 
 int sigPipe[2];
 void handleSignal(int)
@@ -36,7 +32,6 @@ std::random_device rd;
 std::mt19937 gen(rd());
 
 void runPerson(int id);
-void loadConfig(const std::string &path);
 void waitInterval();
 
 int main()
@@ -44,15 +39,14 @@ int main()
     pipe(sigPipe);
     fcntl(sigPipe[0], F_SETFL, O_NONBLOCK);
     signal(SIGINT, handleSignal);
-    loadConfig("config.json");
 
     auto shmObj = SharedMemoryFactory::join();
     shm = shmObj.get();
 
     // run Persons on threads
     std::vector<std::thread> persons;
-    fifos.reserve(maxPersons);
-    for (int i = 0; i < maxPersons && running; i++)
+    fifos.reserve(PERSON_COUNT);
+    for (int i = 0; i < PERSON_COUNT && running; i++)
     {
         std::cout << "Creating threads: fifo " << i << std::endl;
         fifos.push_back(FifoFactory::createReceiver("person_" + std::to_string(i)));
@@ -83,10 +77,10 @@ int main()
 void runPerson(int id)
 {
     std::cout << "Starting Person_" << id << std::endl;
-    std::uniform_int_distribution<> dist(0, floors);
+    std::uniform_int_distribution<> dist(0, MAX_FLOOR);
     unsigned int curr = 0, dest = 0;
     // TODO: shared memory data: use correct pointer
-    Position *position = &shm->personPositions;
+    PersonState *state = &shm->personStates[id];
 
     while (running)
     {
@@ -98,7 +92,7 @@ void runPerson(int id)
         std::cout << "Running Person_" << id << " with " << curr << " " << dest << std::endl;
 
         Person(
-            position,
+            state,
             curr,
             dest,
             &fifos[id],
@@ -109,18 +103,7 @@ void runPerson(int id)
     }
 }
 
-void loadConfig(const std::string &path)
-{
-    nlohmann::json j = readJson(path);
-
-    floors = j["floors"];
-    maxPersons = j["maxPersons"];
-    interval = j["personMinInterval"];
-
-    std::cout << "Config for persons: floors " << floors << " maxPersons " << maxPersons << " interval " << interval << std::endl;
-}
-
 void waitInterval()
 {
-    std::this_thread::sleep_for(std::chrono::seconds(interval));
+    std::this_thread::sleep_for(std::chrono::seconds(PERSON_INTERVAL));
 }

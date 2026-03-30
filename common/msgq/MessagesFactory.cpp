@@ -1,11 +1,18 @@
 #include "MessagesFactory.hpp"
 
-Messages MessagesFactory::manager()
+#include "mqNames.hpp"
+
+Messages<CallElevatorMessage> MessagesFactory::manager()
 {
-    return Messages(O_CREAT | O_RDONLY, true);
+    std::string name{MQ_MANAGER_REQUESTS};
+    return Messages<CallElevatorMessage>(name,
+                                         sizeof(CallElevatorMessage),
+                                         O_CREAT | O_RDONLY,
+                                         true);
 }
 
-Messages MessagesFactory::person()
+Messages<CallElevatorMessage> MessagesFactory::person()
 {
-    return Messages(O_WRONLY);
+    std::string name{MQ_MANAGER_REQUESTS};
+    return Messages<CallElevatorMessage>(name, sizeof(CallElevatorMessage), O_WRONLY);
 }

@@ -6,42 +6,38 @@
 
 #include "UI.hpp"
 #include "msgq/Messages.hpp"
+#include "msgq/CallElevatorMessage.hpp"
 #include "shared_memory/SharedMemory.hpp"
-#include "shared_memory/SharedData.hpp"
+#include "shared_memory/States.hpp"
 
 class Manager
 {
 public:
     Manager(UI *ui, std::atomic<bool> &running);
 
-    void loadConfig(const std::string &path);
     void start();
     void stop();
 
 private:
     UI *ui;
-    Messages messages;
-    SharedMemory<SharedData> shm;
-
-    struct Config
-    {
-        // elevators
-        unsigned int floors;
-
-        int travelTime;
-    } cfg;
+    Messages<CallElevatorMessage> messages;
+    SharedMemory<States> shm;
 
     struct ElevatorGroup
     {
+        unsigned int count; // TODO: just count for now
         unsigned int minFloor;
         unsigned int maxFloor;
-        unsigned int count; // TODO: just count for now
     };
     std::vector<ElevatorGroup> groups;
 
+    void loadConfig();
+
+    // Persons
     pid_t personsPid;
     void runPersons();
 
+    // RequestsHandler
     std::atomic<bool> &running;
     std::unique_ptr<std::thread> requests;
     void runRequestsHandler();

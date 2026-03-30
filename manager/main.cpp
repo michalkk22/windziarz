@@ -19,7 +19,6 @@ int main()
     signal(SIGINT, handleSignal);
     auto ui = EmptyUI();
     Manager manager(&ui, running);
-    manager.loadConfig("config.json");
     manager.start();
     return 0;
 }

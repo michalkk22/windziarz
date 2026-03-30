@@ -2,14 +2,15 @@
 
 #include <atomic>
 
-#include "Position.hpp"
 #include "msgq/Messages.hpp"
+#include "msgq/CallElevatorMessage.hpp"
 #include "fifo/FifoChannel.hpp"
+#include "PersonState.hpp"
 
 class Person
 {
 public:
-    Person(Position *position,
+    Person(PersonState *state,
            unsigned int currentFloor,
            unsigned int destinationFloor,
            FifoChannel *fifo,
@@ -18,12 +19,13 @@ public:
     void run();
 
 private:
-    Position *position;
+    PersonState *state;
     unsigned int destinationFloor;
-    Messages messages;
+    Messages<CallElevatorMessage> messages;
     FifoChannel *fifo;
     std::atomic<bool> &running;
 
+    void updateState(const int elevator, const unsigned int floor = -1);
     void callElevator();
     int getElevatorData();
     void waitForElevatorAndEnter();
