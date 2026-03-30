@@ -7,8 +7,8 @@
 
 #include "fifo/FifoFactory.hpp"
 
-RequestsHandler::RequestsHandler(Messages<CallElevatorMessage> *messages, States *shm, std::atomic<bool> &running)
-    : messages(messages), shm(shm), running(running) {}
+RequestsHandler::RequestsHandler(Messages<CallElevatorMessage> *messages, States *states, std::atomic<bool> &running)
+    : messages(messages), states(states), running(running) {}
 
 void RequestsHandler::run()
 {
@@ -34,9 +34,8 @@ void RequestsHandler::handle(CallElevatorMessage &msg)
 
     // answer Person
     std::string pipe(msg.pipe.data());
-    std::cout << "Sending elevator: " << msg.floor << " to pipe " << pipe << std::endl;
+    std::cout << "Sending elevator: " << elevator << " to flor " << msg.floor << " to pipe " << pipe << std::endl;
     std::unique_ptr<FifoChannel> fifo =
         FifoFactory::createSender(pipe);
     fifo->sendInt(elevator);
-    std::cout << "Handler sent elevator " << msg.floor << " to pipe " << pipe << std::endl;
 };

@@ -21,7 +21,7 @@ public:
 private:
     UI *ui;
     Messages<CallElevatorMessage> messages;
-    SharedMemory<States> shm;
+    SharedMemory<States> states;
 
     struct ElevatorGroup
     {

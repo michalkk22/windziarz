@@ -14,7 +14,7 @@
 
 Manager::Manager(UI *ui, std::atomic<bool> &running) : ui(ui),
                                                        messages(MessagesFactory::manager()),
-                                                       shm(SharedMemoryFactory::create()),
+                                                       states(SharedMemoryFactory::create()),
                                                        running(running)
 {
     loadConfig();
@@ -42,7 +42,7 @@ void Manager::start()
         runRequestsHandler();
 
         // start ui
-        ui->start(running, shm.get());
+        ui->start(running, states.get());
 
         // gets here when UI stop -> running == false
         stop();
@@ -83,6 +83,6 @@ void Manager::runPersons()
 void Manager::runRequestsHandler()
 {
     requests = std::make_unique<std::thread>([this]()
-                                             { RequestsHandler{&messages, shm.get(), running}
+                                             { RequestsHandler{&messages, states.get(), running}
                                                    .run(); });
 }

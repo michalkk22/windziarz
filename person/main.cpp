@@ -18,7 +18,7 @@
 std::atomic<bool> running(true);
 
 std::vector<FifoChannel> fifos;
-States *shm;
+States *states;
 
 int sigPipe[2];
 void handleSignal(int)
@@ -41,7 +41,7 @@ int main()
     signal(SIGINT, handleSignal);
 
     auto shmObj = SharedMemoryFactory::join();
-    shm = shmObj.get();
+    states = shmObj.get();
 
     // run Persons on threads
     std::vector<std::thread> persons;
@@ -80,7 +80,7 @@ void runPerson(int id)
     std::uniform_int_distribution<> dist(0, MAX_FLOOR);
     unsigned int curr = 0, dest = 0;
     // TODO: shared memory data: use correct pointer
-    PersonState *state = &shm->personStates[id];
+    PersonState *state = &states->personStates[id];
 
     while (running)
     {

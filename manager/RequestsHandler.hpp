@@ -9,13 +9,13 @@
 class RequestsHandler
 {
 public:
-    RequestsHandler(Messages<CallElevatorMessage> *messages, States *shm, std::atomic<bool> &running);
+    RequestsHandler(Messages<CallElevatorMessage> *messages, States *states, std::atomic<bool> &running);
 
     void run();
 
 private:
     Messages<CallElevatorMessage> *messages;
-    States *shm;
+    States *states;
     std::atomic<bool> &running;
 
     void handle(CallElevatorMessage &msg);

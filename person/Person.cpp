@@ -41,6 +41,7 @@ void Person::run()
 
         // exit
     }
+    std::cout << "Person finished running" << std::endl;
 }
 
 void Person::updateState(const int elevator, const unsigned int floor)
