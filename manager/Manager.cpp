@@ -20,22 +20,13 @@ Manager::Manager(UI *ui, std::atomic<bool> &running) : ui(ui),
     loadConfig();
 }
 
-void Manager::loadConfig()
-{
-    for (auto group : ELEVATOR_GROUPS)
-    {
-        groups.push_back({group.count,
-                          group.minFloor,
-                          group.maxFloor});
-    }
-}
-
 void Manager::start()
 {
     try
     {
         // TODO:
         // create elevators
+        runElevators();
         // create persons
         runPersons();
         // start requests handler thread
@@ -61,8 +52,30 @@ void Manager::stop()
 
     requests->join();
 
-    // kill(personsPid, SIGINT); // not needed?
+    // kill(personsPid, SIGINT); // not needed? yup, it's not
     waitpid(personsPid, nullptr, 0);
+
+    for (auto p : elevatorPids)
+        waitpid(p, nullptr, 0);
+}
+
+void Manager::loadConfig()
+{
+    for (auto group : ELEVATOR_GROUPS)
+        for (int i = 0; i < group.count; i++)
+            elevators.push_back({group.minFloor,
+                                 group.maxFloor});
+}
+
+void Manager::runElevators()
+{
+    int id = 0;
+    for (auto e : elevators)
+    {
+        auto qshm = SharedMemoryFactory::createElevatorQueue(std::to_string(id));
+
+        id++;
+    }
 }
 
 void Manager::runPersons()

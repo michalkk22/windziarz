@@ -16,7 +16,6 @@ public:
     Manager(UI *ui, std::atomic<bool> &running);
 
     void start();
-    void stop();
 
 private:
     UI *ui;
@@ -24,15 +23,20 @@ private:
     SharedMemory<States> states;
     std::atomic<bool> &running;
 
-    struct ElevatorGroup
+    void stop();
+
+    struct ElevatorRange
     {
-        unsigned int count; // TODO: just count for now
         unsigned int minFloor;
         unsigned int maxFloor;
     };
-    std::vector<ElevatorGroup> groups;
+    std::vector<ElevatorRange> elevators;
 
     void loadConfig();
+
+    // Elevators
+    std::vector<pid_t> elevatorPids;
+    void runElevators();
 
     // Persons
     pid_t personsPid;
