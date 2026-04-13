@@ -11,7 +11,7 @@
 #include <iostream>
 
 FifoChannel::FifoChannel(const std::string &path, Mode mode, bool create)
-    : path_(path), owner_(create)
+    : path(path), owner(create)
 {
     if (create)
     {
@@ -23,8 +23,8 @@ FifoChannel::FifoChannel(const std::string &path, Mode mode, bool create)
 
     int flags = (mode == Mode::Read) ? O_RDWR : O_WRONLY;
 
-    fd_ = open(path.c_str(), flags);
-    if (fd_ == -1)
+    fd = open(path.c_str(), flags);
+    if (fd == -1)
     {
         std::cout << path << std::endl;
         throw std::runtime_error("open failed: " + std::string(strerror(errno)));
@@ -33,40 +33,40 @@ FifoChannel::FifoChannel(const std::string &path, Mode mode, bool create)
 
 FifoChannel::~FifoChannel()
 {
-    if (fd_ != -1)
+    if (fd != -1)
     {
-        close(fd_);
+        close(fd);
     }
-    if (owner_)
+    if (owner)
     {
-        unlink(path_.c_str());
+        unlink(path.c_str());
     }
 }
 
 FifoChannel::FifoChannel(FifoChannel &&other) noexcept
-    : path_(std::move(other.path_)), fd_(other.fd_), owner_(other.owner_)
+    : path(std::move(other.path)), fd(other.fd), owner(other.owner)
 {
-    other.fd_ = -1;
-    other.owner_ = false;
+    other.fd = -1;
+    other.owner = false;
 }
 
 FifoChannel &FifoChannel::operator=(FifoChannel &&other) noexcept
 {
     if (this != &other)
     {
-        fd_ = other.fd_;
-        path_ = std::move(other.path_);
-        owner_ = other.owner_;
+        fd = other.fd;
+        path = std::move(other.path);
+        owner = other.owner;
 
-        other.fd_ = -1;
-        other.owner_ = false;
+        other.fd = -1;
+        other.owner = false;
     }
     return *this;
 }
 
 void FifoChannel::sendInt(int value) const
 {
-    if (write(fd_, &value, sizeof(value)) != sizeof(value))
+    if (write(fd, &value, sizeof(value)) != sizeof(value))
     {
         throw std::runtime_error("write failed");
     }
@@ -77,7 +77,7 @@ int FifoChannel::receiveInt() const
     int value;
 
     struct pollfd pfd;
-    pfd.fd = fd_;
+    pfd.fd = fd;
     pfd.events = POLLIN;
 
     int result = poll(&pfd, 1, 1000);
@@ -85,7 +85,7 @@ int FifoChannel::receiveInt() const
     {
         if (pfd.revents & POLLIN)
         {
-            if (read(fd_, &value, sizeof(value)) != sizeof(value))
+            if (read(fd, &value, sizeof(value)) != sizeof(value))
             {
                 throw std::runtime_error("read failed");
             }
@@ -106,7 +106,7 @@ int FifoChannel::receiveInt() const
 
 std::string FifoChannel::getName() const
 {
-    size_t pos = path_.find_last_of("/");
-    std::string name = path_.substr(pos + 1);
+    size_t pos = path.find_last_of("/");
+    std::string name = path.substr(pos + 1);
     return name;
 }

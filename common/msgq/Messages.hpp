@@ -16,15 +16,15 @@ public:
              long msgSize,
              int flags,
              bool shouldUnlink = false)
-        : mq_(name,
-              flags,
-              MessageQueue::Config{msgSize, 10, (mode_t)0644}),
+        : mq(name,
+             flags,
+             MessageQueue::Config{msgSize, 10, (mode_t)0644}),
           shouldUnlink(shouldUnlink) {}
 
     ~Messages()
     {
         if (shouldUnlink)
-            mq_.unlink();
+            mq.unlink();
     }
 
     Messages(const Messages &) = delete;
@@ -35,13 +35,13 @@ public:
 
     void send(const T &message) const
     {
-        mq_.send(reinterpret_cast<const char *>(&message), sizeof(message));
+        mq.send(reinterpret_cast<const char *>(&message), sizeof(message));
     }
 
     std::optional<T> receive() const
     {
         T msg;
-        ssize_t result = mq_.receive(reinterpret_cast<char *>(&msg), sizeof(msg));
+        ssize_t result = mq.receive(reinterpret_cast<char *>(&msg), sizeof(msg));
         if (result == -1)
         {
             return std::nullopt;
@@ -50,6 +50,6 @@ public:
     }
 
 private:
-    MessageQueue mq_;
+    MessageQueue mq;
     bool shouldUnlink;
 };

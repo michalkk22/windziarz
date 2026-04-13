@@ -12,7 +12,7 @@ SharedMemory<States> SharedMemoryFactory::joinStates()
     return SharedMemory<States>(SHM_STATES);
 }
 
-SharedMemory<ElevatorQueueData> SharedMemoryFactory::createElevatorQueue(std::string id)
+SharedMemory<ElevatorQueueData> SharedMemoryFactory::createElevatorQueue(const std::string &id)
 {
     SharedMemory<ElevatorQueueData> shm(SHM_ELEVATOR_QUEUE_PREFIX + id, true);
 
@@ -25,7 +25,7 @@ SharedMemory<ElevatorQueueData> SharedMemoryFactory::createElevatorQueue(std::st
     return shm;
 }
 
-SharedMemory<ElevatorQueueData> SharedMemoryFactory::joinElevatorQueue(std::string id)
+SharedMemory<ElevatorQueueData> SharedMemoryFactory::joinElevatorQueue(const std::string &id)
 {
     return SharedMemory<ElevatorQueueData>(SHM_ELEVATOR_QUEUE_PREFIX + id);
 }

@@ -30,9 +30,9 @@ public:
     void unlink() const;
 
 private:
-    mqd_t mq_{-1};
-    std::string name_;
-    struct mq_attr attr_{};
+    mqd_t mq{-1};
+    std::string name;
+    struct mq_attr attr{};
 
     static std::string normalizeName(const std::string &name);
 };

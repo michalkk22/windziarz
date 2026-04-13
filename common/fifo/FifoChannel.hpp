@@ -25,7 +25,7 @@ public:
     std::string getName() const;
 
 private:
-    std::string path_;
-    int fd_{-1};
-    bool owner_{false};
+    std::string path;
+    int fd{-1};
+    bool owner{false};
 };

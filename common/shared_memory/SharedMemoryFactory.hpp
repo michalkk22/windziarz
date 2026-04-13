@@ -12,6 +12,6 @@ public:
     static SharedMemory<States> createStates();
     static SharedMemory<States> joinStates();
 
-    static SharedMemory<ElevatorQueueData> createElevatorQueue(std::string id);
-    static SharedMemory<ElevatorQueueData> joinElevatorQueue(std::string id);
+    static SharedMemory<ElevatorQueueData> createElevatorQueue(const std::string &id);
+    static SharedMemory<ElevatorQueueData> joinElevatorQueue(const std::string &id);
 };

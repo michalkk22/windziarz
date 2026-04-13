@@ -39,6 +39,8 @@ void ElevatorQueue::addFloor(unsigned int floor)
     if (floor < d.minFloor)
         floor = d.minFloor;
 
+    // TODO:
+    // insert into correct position
     for (size_t i = d.size; i > 0; --i)
     {
         d.queue[i] = d.queue[i - 1];

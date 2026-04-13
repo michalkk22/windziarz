@@ -5,19 +5,19 @@
 #include <ctime>
 
 MessageQueue::MessageQueue(const std::string &name, int flags, const Config &cfg)
-    : name_(normalizeName(name))
+    : name(normalizeName(name))
 {
     struct mq_attr attr{};
     attr.mq_msgsize = cfg.messageSize;
     attr.mq_maxmsg = cfg.maxMessages;
 
-    mq_ = mq_open(name_.c_str(), flags, cfg.mode, &attr);
-    if (mq_ == (mqd_t)-1)
+    mq = mq_open(name.c_str(), flags, cfg.mode, &attr);
+    if (mq == (mqd_t)-1)
     {
         throw std::runtime_error("mq_open failed: " + std::string(strerror(errno)));
     }
 
-    if (mq_getattr(mq_, &attr_) == -1)
+    if (mq_getattr(mq, &attr) == -1)
     {
         throw std::runtime_error("mq_getattr failed: " + std::string(strerror(errno)));
     }
@@ -25,37 +25,37 @@ MessageQueue::MessageQueue(const std::string &name, int flags, const Config &cfg
 
 MessageQueue::~MessageQueue()
 {
-    if (mq_ != (mqd_t)-1)
+    if (mq != (mqd_t)-1)
     {
-        mq_close(mq_);
+        mq_close(mq);
     }
 }
 
 MessageQueue::MessageQueue(MessageQueue &&other) noexcept
-    : mq_(other.mq_), name_(std::move(other.name_)), attr_(other.attr_)
+    : mq(other.mq), name(std::move(other.name)), attr(other.attr)
 {
-    other.mq_ = (mqd_t)-1;
+    other.mq = (mqd_t)-1;
 }
 
 MessageQueue &MessageQueue::operator=(MessageQueue &&other) noexcept
 {
     if (this != &other)
     {
-        mq_ = other.mq_;
-        name_ = std::move(other.name_);
-        attr_ = other.attr_;
-        other.mq_ = (mqd_t)-1;
+        mq = other.mq;
+        name = std::move(other.name);
+        attr = other.attr;
+        other.mq = (mqd_t)-1;
     }
     return *this;
 }
 
 void MessageQueue::send(const char *msg_ptr, size_t msg_len, unsigned int prio) const
 {
-    if (msg_len > static_cast<size_t>(attr_.mq_msgsize))
+    if (msg_len > static_cast<size_t>(attr.mq_msgsize))
     {
         throw std::runtime_error("Message too large");
     }
-    if (mq_send(mq_, msg_ptr, msg_len, prio) == -1)
+    if (mq_send(mq, msg_ptr, msg_len, prio) == -1)
     {
         throw std::runtime_error("mq_send failed: " + std::string(strerror(errno)));
     }
@@ -63,7 +63,7 @@ void MessageQueue::send(const char *msg_ptr, size_t msg_len, unsigned int prio) 
 
 ssize_t MessageQueue::receive(char *buffer, size_t buffer_len, unsigned int *prio) const
 {
-    if (buffer_len < static_cast<size_t>(attr_.mq_msgsize))
+    if (buffer_len < static_cast<size_t>(attr.mq_msgsize))
     {
         throw std::runtime_error("Buffer too small");
     }
@@ -72,7 +72,7 @@ ssize_t MessageQueue::receive(char *buffer, size_t buffer_len, unsigned int *pri
     clock_gettime(CLOCK_REALTIME, &ts);
     ts.tv_sec += 1;
 
-    ssize_t bytes = mq_timedreceive(mq_, buffer, buffer_len, prio, &ts);
+    ssize_t bytes = mq_timedreceive(mq, buffer, buffer_len, prio, &ts);
 
     if (bytes == -1 && errno != ETIMEDOUT)
     {
@@ -84,7 +84,7 @@ ssize_t MessageQueue::receive(char *buffer, size_t buffer_len, unsigned int *pri
 
 void MessageQueue::unlink() const
 {
-    if (mq_unlink(name_.c_str()) == -1)
+    if (mq_unlink(name.c_str()) == -1)
     {
         throw std::runtime_error("mq_unlink failed: " + std::string(strerror(errno)));
     }

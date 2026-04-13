@@ -10,6 +10,6 @@ public:
     static Messages<CallElevatorMessage> manager();
     static Messages<CallElevatorMessage> person();
 
-    static Messages<FloorRequestMessage> createElevatorRequests(std::string id);
-    static Messages<FloorRequestMessage> joinElevatorRequests(std::string id);
+    static Messages<FloorRequestMessage> createElevatorRequests(const std::string &id);
+    static Messages<FloorRequestMessage> joinElevatorRequests(const std::string &id);
 };

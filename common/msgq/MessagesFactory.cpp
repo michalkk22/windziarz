@@ -17,7 +17,7 @@ Messages<CallElevatorMessage> MessagesFactory::person()
                                          O_WRONLY);
 }
 
-Messages<FloorRequestMessage> MessagesFactory::createElevatorRequests(std::string id)
+Messages<FloorRequestMessage> MessagesFactory::createElevatorRequests(const std::string &id)
 {
     return Messages<FloorRequestMessage>(MQ_ELEVATOR_PREFIX + id,
                                          sizeof(FloorRequestMessage),
@@ -25,7 +25,7 @@ Messages<FloorRequestMessage> MessagesFactory::createElevatorRequests(std::strin
                                          true);
 }
 
-Messages<FloorRequestMessage> MessagesFactory::joinElevatorRequests(std::string id)
+Messages<FloorRequestMessage> MessagesFactory::joinElevatorRequests(const std::string &id)
 {
     return Messages<FloorRequestMessage>(MQ_ELEVATOR_PREFIX + id,
                                          sizeof(FloorRequestMessage),
